@@ -17,13 +17,16 @@ import { app } from '../firebase';
 import {
     updateUserStart,
     updateUserSuccess,
-    updateUserFailure
+    updateUserFailure,
+    deleteUserStart,
+    deleteUserSuccess,
+    deleteUserFailure
 } from '../redux/user/userSlice.js'
 
 
 export default function Profile() {
     const dispatch = useDispatch();
-    const { currentUser,loading, error } = useSelector(state => state.user);
+    const { currentUser, loading, error } = useSelector(state => state.user);
     const fileRef = useRef(null);
     const [file, setFile] = useState(undefined);
     const [filePerc, setFilePerc] = useState(0);
@@ -91,6 +94,28 @@ export default function Profile() {
         } catch (error) {
             dispatch(updateUserFailure(error.message));
         }
+    };
+
+    const handleDeleteUser = async () => {
+        try {
+            dispatch(deleteUserStart());
+
+            const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+                method: 'DELETE'
+            });
+
+            const data = await res.json();
+
+            if (data === false) {
+                dispatch(deleteUserFailure(data.message));
+                return;
+            }
+            
+            dispatch(deleteUserSuccess(data));
+
+        } catch (error) {
+            dispatch(deleteUserFailure(error.message));
+        }
     }
 
     return (
@@ -146,11 +171,11 @@ export default function Profile() {
                 >{loading ? 'loading...' : 'update'}</button>
             </form>
             <div className='flex justify-between mt-5'>
-                <span className='text-red-700 cursor-pointer'>Delete Account</span>
+                <span onClick={handleDeleteUser} className='text-red-700 cursor-pointer'>Delete Account</span>
                 <span className='text-red-700 cursor-pointer'>Sign out</span>
             </div>
-            <p className='text-red-700 mt-5'>{error ? error :" "}</p>
-            <p className='text-green-700 mt-5'>{updateSuccess ? 'User is updated successfully!' :" "}</p>
+            <p className='text-red-700 mt-5'>{error ? error : " "}</p>
+            <p className='text-green-700 mt-5'>{updateSuccess ? 'User is updated successfully!' : " "}</p>
         </div>
     )
 }
