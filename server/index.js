@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import cookieParser from 'cookie-parser';
 dotenv.config();
 
 // router is exported as default export in user.routes.js so it name can be changed to be used when importing
@@ -9,6 +10,7 @@ import authRouter from './routes/auth.route.js'
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 mongoose.connect(process.env.MONGO)
 .then(() => console.log('connected to db'))
