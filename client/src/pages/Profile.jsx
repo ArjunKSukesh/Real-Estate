@@ -60,7 +60,7 @@ export default function Profile() {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             // console.log('Upload is '+ progress+'% done ')
             setFilePerc(Math.round(progress));
-        },
+            },
             (error) => {
                 setFileUploadError(true);
             },
@@ -126,7 +126,7 @@ export default function Profile() {
             dispatch(signOutUserStart())
             const res = await fetch('/api/auth/signout');
             const data = await res.json();
-            
+
             if(data.success === false){
                 dispatch(signOutUserFailure(data.message))
                 return;
