@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
     useRef,
     useState,
@@ -37,6 +37,8 @@ export default function Profile() {
     const [fileUploadError, setFileUploadError] = useState(false);
     const [formData, setFormData] = useState({});
     const [updateSuccess, setUpdateSuccess] = useState(false)
+    const [showListingsError, setShowListingsError] = useState(false);
+    const [userListings, setUserListings] = useState([]);
     console.log(formData);
     // console.log(filePerc);
     // console.log(fileUploadError);
@@ -61,7 +63,7 @@ export default function Profile() {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             // console.log('Upload is '+ progress+'% done ')
             setFilePerc(Math.round(progress));
-            },
+        },
             (error) => {
                 setFileUploadError(true);
             },
@@ -128,7 +130,7 @@ export default function Profile() {
             const res = await fetch('/api/auth/signout');
             const data = await res.json();
 
-            if(data.success === false){
+            if (data.success === false) {
                 dispatch(signOutUserFailure(data.message))
                 return;
             }
@@ -136,6 +138,23 @@ export default function Profile() {
         } catch (error) {
             dispatch(signOutUserFailure(error.message))
         }
+    }
+
+
+    const handleShowlistings = async () => {
+        try {
+                setShowListingsError(false);
+                const res = await fetch(`/api/user/listings/${currentUser._id}`);
+                const data = await res.json();
+                if(data.success === false){
+                    setShowListingsError(true);
+                    return;
+                }
+                setUserListings(data);
+        } catch (error) {
+            setShowListingsError(true)
+        }
+
     }
 
     return (
@@ -189,9 +208,9 @@ export default function Profile() {
                     disabled={loading}
                     className='bg-slate-700 text-white p-3 rounded-lg hover:opacity-95 disabled:opacity-80 uppercase'
                 >{loading ? 'loading...' : 'update'}</button>
-                <Link 
-                to={'/create-listing'}
-                className='bg-green-700 text-white p-3 rounded-lg text-center hover:border-opacity-95 uppercase'
+                <Link
+                    to={'/create-listing'}
+                    className='bg-green-700 text-white p-3 rounded-lg text-center hover:border-opacity-95 uppercase'
                 >create listing</Link>
             </form>
             <div className='flex justify-between mt-5'>
@@ -208,6 +227,31 @@ export default function Profile() {
             </div>
             <p className='text-red-700 mt-5'>{error ? error : " "}</p>
             <p className='text-green-700 mt-5'>{updateSuccess ? 'User is updated successfully!' : " "}</p>
+            <button onClick={handleShowlistings} className='w-full text-green-700'>Show listings</button>
+            <p className='text-red-700 mt-5'>{showListingsError? 'Error showing listings' : ''}</p>
+
+
+            {
+                userListings && userListings.length > 0 && 
+               <div className='flex flex-col gap-4'>
+                <h1 className='text-2xl my-7 text-center font-semibold'>Your Listings</h1>
+                {userListings.map((listing) => (
+                <div key={listing._id} className='flex gap-4 justify-between items-center border rounded-lg p-3'>
+                    <Link to={`/listings/${listing._id}`}>
+                        <img src={listing.imageUrls[0]} alt="listing cover"  className='h-16 w-16 object-contain'/>
+                    </Link>
+                    <Link className='flex-1 text-slate-700 font-semibold  hover:underline truncate' to={`/listings/${listing._id}`}>
+                        <p >{listing.name}</p>
+                    </Link>
+
+                    <div className='flex flex-col items-center'>
+                        <button className='text-red-700 uppercase'>Delete</button>
+                        <button className='text-green-700 uppercase'>Edit</button>
+                    </div>
+                </div>))}
+                </div>
+            }
+            
         </div>
     )
 }
