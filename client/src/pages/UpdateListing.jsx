@@ -223,17 +223,17 @@ export default function UpdateListing() {
             </div>
 
             <div className="flex gap-2">
-              <input type="checkbox" id="parking" className="w-5" onChange={handleChange} value={formData.parking} />
+              <input type="checkbox" id="parking" className="w-5" onChange={handleChange} checked={formData.parking} />
               <span>Parking Spot</span>
             </div>
 
             <div className="flex gap-2">
-              <input type="checkbox" id="furnished" className="w-5" onChange={handleChange} value={formData.furnished} />
+              <input type="checkbox" id="furnished" className="w-5" onChange={handleChange} checked={formData.furnished} />
               <span>Furnished</span>
             </div>
 
             <div className="flex gap-2">
-              <input type="checkbox" id="offer" className="w-5" onChange={handleChange} value={formData.offer} />
+              <input type="checkbox" id="offer" className="w-5" onChange={handleChange} checked={formData.offer} />
               <span>Offer</span>
             </div>
 
