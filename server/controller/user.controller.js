@@ -52,7 +52,7 @@ export const deleteUser = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-};  
+};
 
 export const getUserListings = async (req, res, next) => {
     if (req.user.id === req.params.id) {
@@ -61,7 +61,7 @@ export const getUserListings = async (req, res, next) => {
             const listings = await Listing.find({ userRef: req.user.id });
             // console.log(listing)
             res.status(200).json(listings);
-            console.log(listings)
+            // console.log(listings)
         } catch (error) {
             next(error)
         }
@@ -71,6 +71,20 @@ export const getUserListings = async (req, res, next) => {
     }
 }
 
+
+export const getUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+        console.log(user)
+        if (!user) return next(errorHandler(401, 'User not found '))
+        const { password: pass, ...rest } = user._doc;
+        res.status(200).json(rest);
+        console.log(rest);
+    } catch (error) {
+        next(error);
+        console.log(error)
+    }
+}
 
 
 
