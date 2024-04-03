@@ -52,7 +52,7 @@ export default function CreateListing() {
           setUploading(false)
         })
         .catch((err) => {
-          setImageUploadError('Image upload failed(2 mb max per )');
+          setImageUploadError('Image upload failed(5 mb max per )');
         })
 
     }
@@ -164,7 +164,7 @@ export default function CreateListing() {
             id="name"
             className="p-3 rounded-lg  border"
             maxLength='62'
-            minLength='10'
+            minLength='7'
             required
             onChange={handleChange}
             value={formData.name}
@@ -256,7 +256,7 @@ export default function CreateListing() {
                 id="regularPrice"
                 type="number"
                 min='500'
-                max='1000000'
+                max='10000000'
                 required
                 onChange={handleChange} value={formData.regularPrice}
               />
